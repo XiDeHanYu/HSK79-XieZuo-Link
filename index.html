@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Gắn Link - 习得汉语</title>
+<style>
+    /* VARIABLES - Giữ các biến màu cơ bản từ mã tham khảo */
+    :root {
+        --color1: #2a4d69;         /* Xanh đậm */
+        --color3: #181e1a;         /* Đen/Xám đậm */
+        --color4: #f9f9f9;         /* Trắng ngà */
+        --vocab-highlight: #63a0d8; /* Xanh nổi bật */
+    }
+
+    /* GENERAL STYLES */
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #000000;
+        font-family: Arial, 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        margin: 0;
+        padding: 0 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        max-width: 700px; /* Điều chỉnh kích thước tối đa cho trang link */
+        position: relative;
+    }
+
+    /* HEADER STYLES (Giữ nguyên từ mã tham khảo) */
+    .header-box {
+        width: 98%;
+        max-width: 1100px; /* Matching .text-box max-width */
+        padding: 0px 0px;
+        text-align: left;
+        border-radius: 0px;
+		border: clamp(2px, 1vw, 4px) solid var(--color1);
+        font-weight: bold;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin: 0px auto; /* Căn giữa và tạo khoảng cách */
+    }
+
+    .header-name {
+        background-color: #25455e;
+        color: #7c8f9e;
+        font-size: clamp(30px, 3vw, 35px);
+        margin-top: 10px; /* Thêm khoảng cách từ top body */
+    }
+
+    .header-ref {
+        background-color: #506a7e;
+        color: #ff902e;
+        font-size: clamp(16px, 2vw, 22px);
+    }
+    
+    /* LINK LIST STYLES */
+    .link-list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 15px;
+        padding: 20px 0;
+    }
+
+    .link-button {
+        display: block;
+        padding: 15px 20px;
+        text-decoration: none;
+        text-align: left;
+        border-radius: 8px;
+        font-size: clamp(18px, 3vw, 24px); 
+        font-weight: bold;
+        cursor: pointer;
+        user-select: none;
+        
+        /* HIỆU ỨNG NÚT LẬP THỂ (Dựa trên mã trước) */
+        background: white;
+        color: var(--color1); /* Màu chữ xanh đậm */
+        border: 2px solid var(--vocab-highlight);
+        
+        /* Shadow 3D */
+        box-shadow: 
+            0 4px 0 0 var(--vocab-highlight), 
+            0 6px 12px rgba(0, 0, 0, 0.2); 
+        transform: translateY(0);
+        transition: all 0.1s ease-out;
+    }
+
+    .link-button:hover {
+        background-color: #e0f0ff;
+    }
+
+    /* Hiệu ứng khi bấm */
+    .link-button:active {
+        transform: translateY(4px); /* Di chuyển xuống 4px */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Giảm shadow, trông như đã bấm */
+    }
+
+    /* MEDIA QUERIES */
+    @media (max-width: 768px) { 
+        .header-box {
+            padding: 3px 3px;
+            margin: 0px auto;
+        }
+        .header-name {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .header-ref {
+            font-size: 14px;
+        }
+        .link-list {
+            gap: 10px;
+        }
+        .link-button {
+            padding: 12px 15px;
+            font-size: 18px;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header-box header-name">阮玉煌 - 习得汉语</div>
+        <div class="header-box header-ref">HSK79- 写作参考资料</div>
+        
+        <div id="linkContainer" class="link-list">
+            </div>
+
+    </div>
+
+    <script>
+        // =================================================================================
+        //                             KHAI BÁO DỮ LIỆU VÀ LOGIC
+        // =================================================================================
+
+        // 1. KHAI BÁO MẢNG CHỨA LINK VÀ TÊN
+        const linksData = [
+            { name: "Bài 1 - Gia đình", url: "https://lzltool.cn/Tools/RemovePunctuation" },
+            { name: "Bài 2 - Trường học", url: "bai2_truonghoc.html" },
+            { name: "Bài 3 - Du lịch", url: "bai3_dulich.html" },
+            { name: "Bài 4 - Cuộc sống", url: "bai4_cuocsong.html" },
+            { name: "Bài 5 - Thể thao", url: "bai5_thethao.html" },
+            // Thêm các link khác vào đây...
+        ];
+
+        // 2. HÀM RENDER CÁC NÚT LINK
+        function renderLinks(data) {
+            const container = document.getElementById('linkContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+            
+            // YÊU CẦU: Hiển thị các nút theo thứ tự ngược (từ cuối mảng lên)
+            // Sử dụng spread operator (...) và reverse() để tạo mảng đảo ngược mới
+            const reversedData = [...data].reverse(); 
+
+            reversedData.forEach(link => {
+                const button = document.createElement('a');
+                button.className = 'link-button';
+                button.href = link.url;
+                button.textContent = link.name;
+                button.target = '_self'; // Mở trong cùng tab, đổi thành '_blank' nếu muốn mở tab mới
+                
+                container.appendChild(button);
+            });
+        }
+
+        // 3. KHỞI TẠO TRANG
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLinks(linksData);
+        });
+
+    </script>
+</body>
+</html>
